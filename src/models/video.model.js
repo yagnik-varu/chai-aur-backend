@@ -1,6 +1,7 @@
 import mongoose,{Schema} from 'mongoose';
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 import User from './user.model.js'
+import { removeFromCloudinary } from '../utils/removeCloudinaryUpload.js';
 
 
 
@@ -40,4 +41,6 @@ const videoSchema = new Schema({
 
 },{timestamps:true})
 
-export const Video = mongoose.model("Video",videoSchema);
+
+const Video = mongoose.model("Video",videoSchema);
+export default Video

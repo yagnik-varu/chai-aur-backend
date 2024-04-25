@@ -81,6 +81,8 @@ userSchema.methods.genrateRefreshToken = function () {
     )
 }
 
+
+
 const User = model('User', userSchema);
 
 export default User

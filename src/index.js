@@ -13,3 +13,12 @@ connectDB()
 .catch((err)=>{
     console.log("database connection failed !!",err)
 })
+
+//routes import
+import userRouter from './router/user.route.js'
+import videoRouter from './router/video.route.js'
+
+
+//routes declaration
+app.use("/api/v1/user",userRouter);
+app.use("/api/v1/video",videoRouter);
