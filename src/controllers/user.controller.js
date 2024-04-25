@@ -416,6 +416,7 @@ export {
     refreshAccessToken,
     getCurrentUser,
     changeCurrentPassword,
+    updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
     getWatchHistory,
