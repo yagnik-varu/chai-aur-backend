@@ -75,7 +75,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
               }
         )
     }
-console.log(typeof((sortType==="desc")?(Number(-1)):(Number(1))))
+
     if(query){
         pipeline.push({$match:{query}})
     }
