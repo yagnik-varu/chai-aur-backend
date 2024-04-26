@@ -1,7 +1,9 @@
 
 //upload video on cloudnary first in local machine secound in cloudnary
 //upload video thumbnail 
+import mongoose,{ObjectId} from "mongoose";
 
+import User from "../models/user.model.js";
 import Video from "../models/video.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -58,17 +60,49 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
 })
 
+
 const getAllVideos = asyncHandler(async (req, res) => {
-    const allVideos = await Video.find({}, {})
-    console.log(allVideos)
-    if (!allVideos) {
-        return res.status(204).json(
-            new ApiResponse(204, {}, "no videos are found")
+    //TODO: get all videos based on query, sort, pagination
+    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+    let pipeline = [];
+    console.group(userId)
+    if(userId){
+        pipeline.push(
+            {
+                $match: {
+                    owner:mongoose.Types.ObjectId.createFromHexString(userId)
+                }
+              }
         )
     }
-    return res.status(200).json(
-        new ApiResponse(200, allVideos, "success")
-    )
+console.log(typeof((sortType==="desc")?(Number(-1)):(Number(1))))
+    if(query){
+        pipeline.push({$match:{query}})
+    }
+    
+    if(sortBy&&sortType){
+        let condition = {}
+        condition[sortBy]=(sortType==="desc")?(Number(-1)):(Number(1))
+        pipeline.push({$sort:condition})
+    }
+    // ****** SORT TYPE IS NOT WORK WELL FIX IT AFTER
+
+    const videoAggregate =await Video.aggregate(pipeline)
+
+    // return res.json(video)
+
+
+    Video.aggregatePaginate(videoAggregate,{page,limit})
+            .then(function(result){
+                return res.status(200).json(
+                    new ApiResponse(200,result,"video fetched successfully")
+                )
+            })
+            .catch(function(error){
+                return res.status(401).json(
+                    new ApiError(200,"error in video fetched ",error.message)
+                )
+            })
 })
 
 const getVideoById = asyncHandler(async (req, res) => {

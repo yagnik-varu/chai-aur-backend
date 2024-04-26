@@ -30,4 +30,4 @@ router.route('/:id')
 
 router.route("/toggle/publish/:id").patch(togglePublishStatus);
 
-export default(router)
+export default router
