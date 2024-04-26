@@ -43,4 +43,4 @@ router.route("/channel/:username").get(verifyJwt,getUserChannelProfile);
 router.route("/history").get(verifyJwt,getWatchHistory)
 
 
-export default(router)
+export default router
