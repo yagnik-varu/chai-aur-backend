@@ -76,10 +76,10 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     const videoExistInPlaylist = await Playlist.find(
         {
             videos:videoId
-        }
+        },{}
     )
-    console.log(videoExistInPlaylist)
-    if(videoExistInPlaylist){
+    
+    if(videoExistInPlaylist.length>0){
         return res.status(200).json(
             new ApiResponse(200,{},"video allredy exist in playlist")
         )
@@ -92,7 +92,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
         throw new ApiError(500,"changes are not made in playlist");
     }
     console.log("added video return",addedVideo)
-    const updatedPlaylist = await Playlist.findById(playlistId) 
+    const updatedPlaylist = await Playlist.findById(playlistId).populate('videos')
     return res.status(200).json(
         new ApiResponse(200,updatedPlaylist,"video added to playlist")
     )
