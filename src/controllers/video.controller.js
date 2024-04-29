@@ -1,7 +1,7 @@
 
 //upload video on cloudnary first in local machine secound in cloudnary
 //upload video thumbnail 
-import mongoose,{ObjectId} from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
 import User from "../models/user.model.js";
 import Video from "../models/video.model.js";
@@ -66,43 +66,43 @@ const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
     let pipeline = [];
     console.group(userId)
-    if(userId){
+    if (userId) {
         pipeline.push(
             {
                 $match: {
-                    owner:mongoose.Types.ObjectId.createFromHexString(userId)
+                    owner: mongoose.Types.ObjectId.createFromHexString(userId)
                 }
-              }
+            }
         )
     }
 
-    if(query){
-        pipeline.push({$match:{query}})
+    if (query) {
+        pipeline.push({ $match: { query } })
     }
-    
-    if(sortBy&&sortType){
+
+    if (sortBy && sortType) {
         let condition = {}
-        condition[sortBy]=(sortType==="desc")?(Number(-1)):(Number(1))
-        pipeline.push({$sort:condition})
+        condition[sortBy] = (sortType === "desc") ? (Number(-1)) : (Number(1))
+        pipeline.push({ $sort: condition })
     }
     // ****** SORT TYPE IS NOT WORK WELL FIX IT AFTER
 
-    const videoAggregate =await Video.aggregate(pipeline)
+    const videoAggregate = await Video.aggregate(pipeline)
 
     // return res.json(video)
 
 
-    Video.aggregatePaginate(videoAggregate,{page,limit})
-            .then(function(result){
-                return res.status(200).json(
-                    new ApiResponse(200,result,"video fetched successfully")
-                )
-            })
-            .catch(function(error){
-                return res.status(401).json(
-                    new ApiError(200,"error in video fetched ",error.message)
-                )
-            })
+    Video.aggregatePaginate(videoAggregate, { page, limit })
+        .then(function (result) {
+            return res.status(200).json(
+                new ApiResponse(200, result, "video fetched successfully")
+            )
+        })
+        .catch(function (error) {
+            return res.status(401).json(
+                new ApiError(200, "error in video fetched ", error.message)
+            )
+        })
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
@@ -139,7 +139,7 @@ const updateVideo = asyncHandler(async (req, res) => {
     const videoId = req.params.id
     const newThumbnailPath = req.file?.path
     const { title, description } = req.body;
-    if ([title, description,newThumbnailPath].some((field) => field?.trim() === "")) {
+    if ([title, description, newThumbnailPath].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required !!")
     }
 
@@ -156,14 +156,14 @@ const updateVideo = asyncHandler(async (req, res) => {
     console.log(oldVideoThumbnail)
     await removeFromCloudinary(oldVideoThumbnail)
 
-    const updatedVideo =await Video.findByIdAndUpdate(videoId,{
+    const updatedVideo = await Video.findByIdAndUpdate(videoId, {
         title,
         thumbnail: newThumbnail.url,
         description,
     }, {
         $new: true
     })
-    
+
     return res.status(200).json(
         new ApiResponse(200, updatedVideo, "video updated successfully")
     )
@@ -171,18 +171,18 @@ const updateVideo = asyncHandler(async (req, res) => {
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
-    const  videoId  = req.params.id
-    const video =await Video.findById(videoId);
-    if(!video){
-        throw new ApiError(401,"invalid parameter given")
+    const videoId = req.params.id
+    const video = await Video.findById(videoId);
+    if (!video) {
+        throw new ApiError(401, "invalid parameter given")
     }
     video.isPublished = !video.isPublished
     await video.save();
-    return res.status(200).json(new ApiResponse(200,{},"operation successfull"));
+    return res.status(200).json(new ApiResponse(200, {}, "operation successfull"));
 })
 
 
-export { publishAVideo, getAllVideos, getVideoById, deleteVideo, updateVideo,togglePublishStatus }
+export { publishAVideo, getAllVideos, getVideoById, deleteVideo, updateVideo, togglePublishStatus }
 
 
 
