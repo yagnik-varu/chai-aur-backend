@@ -23,6 +23,7 @@ import tweetRouter from './router/tweet.route.js'
 import likeRouter from './router/like.router.js'
 import playlistRouter from './router/playlist.route.js'
 import dashboardRouter from './router/dashboard.route.js'
+import { healthcheck } from "./controllers/healthcheck.controller.js";
 
 
 //routes declaration
@@ -34,3 +35,4 @@ app.use('/api/v1/tweet',tweetRouter);
 app.use('/api/v1/like',likeRouter);
 app.use('/api/v1/playlist',playlistRouter)
 app.use('/api/v1/dashboard',dashboardRouter)
+app.use('/api/v1/health',healthcheck)
