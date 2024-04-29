@@ -99,48 +99,52 @@ const getChannelStats = asyncHandler(async (req, res) => {
 
 const getChannelVideos = asyncHandler(async (req, res) => {
   // TODO: Get all the videos uploaded by the channel
-  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
-  let pipeline = [];
-  console.group(userId)
-
-  pipeline.push(
-    {
-      $match: {
-        owner: req.user._id
+  try {
+    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+    let pipeline = [];
+    console.group(userId)
+  
+    pipeline.push(
+      {
+        $match: {
+          owner: req.user._id
+        }
       }
+    )
+  
+  
+    if (query) {
+      pipeline.push({ $match: { query } })
     }
-  )
-
-
-  if (query) {
-    pipeline.push({ $match: { query } })
+  
+    if (sortBy && sortType) {
+      let condition = {}
+      condition[sortBy] = (sortType === "desc") ? (Number(-1)) : (Number(1))
+      pipeline.push({ $sort: condition })
+    }
+    // ****** SORT TYPE IS NOT WORK WELL FIX IT AFTER
+  
+    const videoAggregate =Video.aggregate(pipeline)
+    //** HERE WE NOT USE AWAIT BECAUSE AWAIT GIVE US ARRAY BUT AGGREGATE PAGINATE WANTS QUERY(PROMISE)
+    console.log("aggregate video for user")
+    console.log(videoAggregate)
+  
+    // return res.json(video)
+  
+    const paginatedResults = await Video.aggregatePaginate(videoAggregate, { page, limit,sort: { createdAt: 'desc' } });
+    return res.status(200).json(
+      new ApiResponse(200, paginatedResults, "video fetched successfully")
+    )
+  } catch (error) {
+    return res.status(401).json(
+      new ApiError(200, "error in video fetched ", error.message)
+    )
+    
   }
-
-  if (sortBy && sortType) {
-    let condition = {}
-    condition[sortBy] = (sortType === "desc") ? (Number(-1)) : (Number(1))
-    pipeline.push({ $sort: condition })
-  }
-  // ****** SORT TYPE IS NOT WORK WELL FIX IT AFTER
-
-  const videoAggregate = await Video.aggregate(pipeline)
-
-  // return res.json(video)
-
-
-  Video.aggregatePaginate(videoAggregate, { page, limit })
-    .then(function (result) {
-      return res.status(200).json(
-        new ApiResponse(200, result, "video fetched successfully")
-      )
-    })
-    .catch(function (error) {
-      return res.status(401).json(
-        new ApiError(200, "error in video fetched ", error.message)
-      )
-    })
-
 })
+
+
+
 
 export {
   getChannelStats,

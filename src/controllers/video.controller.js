@@ -87,9 +87,9 @@ const getAllVideos = asyncHandler(async (req, res) => {
     }
     // ****** SORT TYPE IS NOT WORK WELL FIX IT AFTER
 
-    const videoAggregate = await Video.aggregate(pipeline)
-
-    // return res.json(video)
+    const videoAggregate =Video.aggregate(pipeline)
+    //DON'T USE AWAIT HERE WE WANT QUERY I PAGINATE FUNCTION AWAIT GIVE ARRAY
+   
 
 
     Video.aggregatePaginate(videoAggregate, { page, limit })
