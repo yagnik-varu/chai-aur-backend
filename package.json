@@ -4,6 +4,7 @@
   "description": "backend app for learning purpose",
   "type": "module",
   "main": "index.js",
+  "proxy": "http://localhost:5173",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },

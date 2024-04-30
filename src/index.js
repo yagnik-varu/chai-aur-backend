@@ -35,4 +35,4 @@ app.use('/api/v1/tweet',tweetRouter);
 app.use('/api/v1/like',likeRouter);
 app.use('/api/v1/playlist',playlistRouter)
 app.use('/api/v1/dashboard',dashboardRouter)
-app.use('/api/v1/health',healthcheck)
+app.use('/api/health',healthcheck)

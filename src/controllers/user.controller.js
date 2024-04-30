@@ -24,7 +24,10 @@ const generateAccessAndRefrenceToken = async (user_id) => {
 }
 
 const registerUser = asyncHandler(async (req, res) => {
+
     const { username, email, fullname, password } = req.body;
+    console.log(req.body,req.files)
+    // return res.json(req.files);
     if ([username, email, fullname, password].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required !!")
     }
@@ -33,11 +36,17 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (existedUser) {
-        throw new ApiError(409, 'User already exist !!')
+        // const userAlreadyExistsError = new ApiError(409, 'User already exists !!');
+        // return res.status(409).json(userAlreadyExistsError);
+        // return res.status(409).json(new ApiError(409, 'User already exist !!'))
+        throw new ApiError(409, 'User already exists !!');
     }
 
-
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    let avatarLocalPath;
+    if (req.files && Array.isArray(req.files.avatar) && req.files.avatar.length > 0) {
+        console.log("inside if")
+        avatarLocalPath = req.files?.avatar[0]?.path;
+    }
     // console.log(avatarLocalPath)
     let coverImageLocalPath;
 
