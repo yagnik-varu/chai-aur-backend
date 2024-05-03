@@ -13,7 +13,7 @@ const removeFromCloudinary = async (path,isVideo=false)=>{
   // console.log(path)
   try{
     const publicId = extractPublicId(path);
-    console.log(publicId)
+    console.log("public id ------------------------------------",publicId)
     let options={}
     if(isVideo){
       options.resource_type="video";
@@ -21,6 +21,7 @@ const removeFromCloudinary = async (path,isVideo=false)=>{
       options.resource_type="image";
 
     }
+    console.log("public id",publicId)
     const response = await cloudinary.uploader.destroy(publicId,options);
     console.log("deleted successfully",response);
   }catch(error){
