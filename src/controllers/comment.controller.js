@@ -8,9 +8,40 @@ const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
     //PAGINATE IS IN PENDING
     const { videoId } = req.params
-    const { page = 1, limit = 1 } = req.query
+    const { page = 1, limit = 5 } = req.query
+    const commentPipeline = [
+        {
+          $match: {
+            video: mongoose.Types.ObjectId.createFromHexString(videoId),
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "ownerInfo",
+            pipeline: [
+              {
+                $project: {
+                  avatar: 1,
+                  fullname: 1,
+                  email: 1,
+                },
+              },
+            ],
+          },
+        },
+        {
+          $addFields: {
+            ownerInfo: {
+              $first: "$ownerInfo",
+            },
+          },
+        },
+      ];
     console.log(req.query)
-    var commentAggregate = Comment.aggregate();
+    const commentAggregate = Comment.aggregate(commentPipeline);
     Comment.aggregatePaginate(commentAggregate, { page, limit })
         .then(function (result) {
             console.log(result)
