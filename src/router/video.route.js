@@ -24,7 +24,7 @@ router.route('/')
 
 
 router.route('/:id')
-.get(getVideoById)
+.get(verifyJwt,getVideoById)
 .delete(deleteVideo)
 .patch(upload.single("thumbnail"), updateVideo);
 
