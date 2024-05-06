@@ -15,6 +15,7 @@ connectDB()
 })
 
 //routes import
+
 import userRouter from './router/user.route.js'
 import videoRouter from './router/video.route.js'
 import commentRouter from './router/comment.route.js'
@@ -27,6 +28,8 @@ import { healthcheck } from "./controllers/healthcheck.controller.js";
 
 
 //routes declaration
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms :response-message'));
+
 app.use("/api/v1/user",userRouter);
 app.use("/api/v1/video",videoRouter);
 app.use('/api/v1/comment',commentRouter);
